@@ -1,0 +1,22 @@
+{
+  "lexicon": 1,
+  "id": "app.gainforest.evaluator.subscription",
+  "description": "A subscription record published by a user to request evaluations from a specific evaluator service.",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "User subscription to an evaluator service.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": ["evaluator", "createdAt"],
+        "properties": {
+          "evaluator": { "type": "string", "format": "did", "description": "DID of the evaluator service to subscribe to." },
+          "collections": { "type": "array", "items": { "type": "string", "maxGraphemes": 128 }, "maxLength": 20, "description": "Which of the user's record collections should be evaluated." },
+          "evaluationTypes": { "type": "array", "items": { "type": "string", "maxGraphemes": 64 }, "maxLength": 20, "description": "Which evaluation types the user wants." },
+          "createdAt": { "type": "string", "format": "datetime", "description": "Timestamp of when this subscription was created." }
+        }
+      }
+    }
+  }
+}

@@ -1,26 +1,149 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --forest-deep: #0a1f0a;
+  --forest-dark: #0f2a0f;
+  --forest-mid: #1a3a1a;
+  --forest-light: #2d5a2d;
+  --forest-accent: #4a8c4a;
+  --earth-brown: #3d2b1f;
+  --earth-tan: #8b6f47;
+  --gold: #c9a84c;
+  --gold-light: #e8c96a;
+  --cream: #f5f0e8;
+  --text-primary: #e8f0e8;
+  --text-secondary: #a8c4a8;
+  --text-muted: #6b8f6b;
+  --new-green: #22c55e;
+  --modified-amber: #f59e0b;
+  --border-subtle: rgba(74, 140, 74, 0.2);
+  --glass-bg: rgba(26, 58, 26, 0.4);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-forest-deep: var(--forest-deep);
+  --color-forest-dark: var(--forest-dark);
+  --color-forest-mid: var(--forest-mid);
+  --color-forest-light: var(--forest-light);
+  --color-forest-accent: var(--forest-accent);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-cream: var(--cream);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-new-green: var(--new-green);
+  --color-modified-amber: var(--modified-amber);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--forest-deep);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--forest-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--forest-light);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--forest-accent);
+}
+
+/* Fade-in animation for scroll reveal */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-in-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger children */
+.fade-in-up:nth-child(1) { transition-delay: 0ms; }
+.fade-in-up:nth-child(2) { transition-delay: 100ms; }
+.fade-in-up:nth-child(3) { transition-delay: 200ms; }
+.fade-in-up:nth-child(4) { transition-delay: 300ms; }
+
+/* Pulse animation for hero */
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); opacity: 0.7; }
+  50% { transform: scale(1.05); opacity: 0.4; }
+  100% { transform: scale(0.95); opacity: 0.7; }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 3s ease-in-out infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+/* Glass morphism */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+}
+
+/* Serif font class */
+.font-serif {
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+}
+
+/* Code/mono */
+.font-mono {
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+}
+
+/* Selection */
+::selection {
+  background: rgba(74, 140, 74, 0.4);
+  color: var(--text-primary);
+}
+
+/* Smooth transitions for interactive elements */
+button, a {
+  transition: all 0.2s ease;
+}
+
+/* Custom focus ring */
+:focus-visible {
+  outline: 2px solid var(--forest-accent);
+  outline-offset: 2px;
 }

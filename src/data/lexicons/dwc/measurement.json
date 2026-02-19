@@ -1,0 +1,30 @@
+{
+  "lexicon": 1,
+  "id": "app.gainforest.dwc.measurement",
+  "description": "A measurement or fact record aligned with the Darwin Core MeasurementOrFact class.",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A measurement, fact, characteristic, or assertion about an occurrence.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": ["occurrenceRef", "measurementType", "measurementValue", "createdAt"],
+        "properties": {
+          "measurementID": { "type": "string", "description": "An identifier for the measurement.", "maxGraphemes": 256 },
+          "occurrenceRef": { "type": "string", "format": "at-uri", "description": "AT-URI reference to the app.gainforest.dwc.occurrence record." },
+          "occurrenceID": { "type": "string", "description": "The occurrenceID of the linked occurrence record.", "maxGraphemes": 256 },
+          "measurementType": { "type": "string", "description": "The nature of the measurement (e.g., 'DBH', 'tree height', 'canopy cover').", "maxGraphemes": 256 },
+          "measurementValue": { "type": "string", "description": "The value of the measurement.", "maxGraphemes": 1024 },
+          "measurementUnit": { "type": "string", "description": "The units for the measurementValue.", "maxGraphemes": 64 },
+          "measurementAccuracy": { "type": "string", "description": "The description of the potential error.", "maxGraphemes": 256 },
+          "measurementMethod": { "type": "string", "description": "The description of or reference to the method used.", "maxGraphemes": 1024 },
+          "measurementDeterminedBy": { "type": "string", "description": "Person(s) who determined the measurement.", "maxGraphemes": 512 },
+          "measurementDeterminedDate": { "type": "string", "description": "The date the measurement was made.", "maxGraphemes": 64 },
+          "measurementRemarks": { "type": "string", "description": "Comments or notes accompanying the measurement.", "maxGraphemes": 5000 },
+          "createdAt": { "type": "string", "format": "datetime", "description": "Timestamp of record creation in the ATProto PDS." }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,157 @@
+"use client";
+
+import FieldCard from "./FieldCard";
+
+type FieldDef = {
+  type?: string;
+  description?: string;
+  format?: string;
+  maxGraphemes?: number;
+  minLength?: number;
+  maxLength?: number;
+  minimum?: number;
+  maximum?: number;
+  enum?: string[];
+  knownValues?: string[];
+  ref?: string;
+  refs?: string[];
+  items?: FieldDef;
+  required?: string[];
+  properties?: Record<string, FieldDef>;
+  accept?: string[];
+  maxSize?: number;
+};
+
+type LexiconDef = {
+  type?: string;
+  description?: string;
+  key?: string;
+  record?: {
+    type?: string;
+    required?: string[];
+    properties?: Record<string, FieldDef>;
+  };
+  required?: string[];
+  properties?: Record<string, FieldDef>;
+};
+
+type SchemaViewProps = {
+  lexiconData: Record<string, unknown>;
+  newFields: string[];
+  modifiedFields: string[];
+  onRefClick?: (ref: string) => void;
+};
+
+function asLexiconDef(val: unknown): LexiconDef {
+  return val as LexiconDef;
+}
+
+function asFieldDef(val: unknown): FieldDef {
+  return val as FieldDef;
+}
+
+export default function SchemaView({
+  lexiconData,
+  newFields,
+  modifiedFields,
+  onRefClick,
+}: SchemaViewProps) {
+  const rawDefs = lexiconData["defs"];
+  const defs: Record<string, LexiconDef> =
+    rawDefs && typeof rawDefs === "object" && !Array.isArray(rawDefs)
+      ? Object.fromEntries(
+          Object.entries(rawDefs as Record<string, unknown>).map(([k, v]) => [k, asLexiconDef(v)])
+        )
+      : {};
+
+  return (
+    <div className="flex flex-col gap-8">
+      {Object.entries(defs).map(([defName, def]) => {
+        const isMainRecord = defName === "main" && def.type === "record";
+        const rawProperties = isMainRecord
+          ? def.record?.properties
+          : def.properties;
+        const properties: Record<string, FieldDef> | undefined =
+          rawProperties
+            ? Object.fromEntries(
+                Object.entries(rawProperties).map(([k, v]) => [k, asFieldDef(v)])
+              )
+            : undefined;
+        const required = isMainRecord ? def.record?.required : def.required;
+
+        return (
+          <div key={defName}>
+            {/* Def header */}
+            <div className="flex items-center gap-3 mb-4">
+              <div
+                className="px-3 py-1 rounded-full text-xs font-mono font-semibold"
+                style={{
+                  background:
+                    defName === "main"
+                      ? "rgba(74,140,74,0.2)"
+                      : "rgba(201,168,76,0.1)",
+                  color: defName === "main" ? "#4a8c4a" : "var(--gold)",
+                  border: `1px solid ${
+                    defName === "main"
+                      ? "rgba(74,140,74,0.3)"
+                      : "rgba(201,168,76,0.2)"
+                  }`,
+                }}
+              >
+                #{defName}
+              </div>
+              {def.type && (
+                <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+                  {def.type}
+                  {isMainRecord && def.key ? ` · key: ${def.key}` : ""}
+                </span>
+              )}
+            </div>
+
+            {/* Description */}
+            {def.description && (
+              <p
+                className="text-sm leading-relaxed mb-4 pl-1"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                {def.description}
+              </p>
+            )}
+
+            {/* Properties */}
+            {properties && Object.keys(properties).length > 0 ? (
+              <div className="flex flex-col gap-3">
+                {Object.entries(properties).map(([fieldName, fieldDef]) => (
+                  <FieldCard
+                    key={fieldName}
+                    name={fieldName}
+                    def={fieldDef}
+                    isNew={newFields.includes(fieldName)}
+                    isModified={modifiedFields.includes(fieldName)}
+                    isRequired={required?.includes(fieldName)}
+                    onRefClick={onRefClick}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p
+                className="text-sm italic"
+                style={{ color: "var(--text-muted)" }}
+              >
+                No properties defined
+              </p>
+            )}
+
+            {/* Separator between defs */}
+            {Object.keys(defs).length > 1 && (
+              <div
+                className="mt-8 border-t"
+                style={{ borderColor: "var(--border-subtle)" }}
+              />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}

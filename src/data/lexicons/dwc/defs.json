@@ -1,0 +1,49 @@
+{
+  "lexicon": 1,
+  "id": "app.gainforest.dwc.defs",
+  "description": "Shared type definitions for Darwin Core aligned biodiversity records",
+  "defs": {
+    "geolocation": {
+      "type": "object",
+      "description": "A geographic point with uncertainty, following Darwin Core Location class",
+      "required": ["decimalLatitude", "decimalLongitude"],
+      "properties": {
+        "decimalLatitude": { "type": "string", "description": "Geographic latitude in decimal degrees (WGS84).", "maxGraphemes": 32 },
+        "decimalLongitude": { "type": "string", "description": "Geographic longitude in decimal degrees (WGS84).", "maxGraphemes": 32 },
+        "coordinateUncertaintyInMeters": { "type": "integer", "description": "Horizontal distance from the coordinates.", "minimum": 1 },
+        "geodeticDatum": { "type": "string", "description": "The ellipsoid, geodetic datum, or spatial reference system.", "maxGraphemes": 64 }
+      }
+    },
+    "taxonIdentification": {
+      "type": "object",
+      "description": "A taxonomic identification with provenance metadata",
+      "required": ["scientificName"],
+      "properties": {
+        "scientificName": { "type": "string", "description": "The full scientific name including authorship and date", "maxGraphemes": 512 },
+        "gbifTaxonKey": { "type": "string", "description": "GBIF backbone taxonomy key", "maxGraphemes": 64 },
+        "identifiedBy": { "type": "string", "description": "Person(s) who made the identification", "maxGraphemes": 512 },
+        "identifiedByID": { "type": "string", "description": "ORCID or other persistent identifier", "maxGraphemes": 512 },
+        "dateIdentified": { "type": "string", "description": "Date the identification was made (ISO 8601)", "maxGraphemes": 64 },
+        "identificationQualifier": { "type": "string", "description": "Uncertainty qualifier applied to the taxon name", "maxGraphemes": 256 },
+        "identificationRemarks": { "type": "string", "description": "Notes or comments about the identification", "maxGraphemes": 2048 }
+      }
+    },
+    "plantTraits": {
+      "type": "object",
+      "description": "Functional plant traits from databases like TRY, Restor",
+      "properties": {
+        "woodDensity": { "type": "string", "description": "Wood density in g/cm³", "maxGraphemes": 32 },
+        "maxHeight": { "type": "string", "description": "Maximum height in meters", "maxGraphemes": 32 },
+        "stemDiameter": { "type": "string", "description": "Typical stem diameter in cm", "maxGraphemes": 32 },
+        "leafArea": { "type": "string", "description": "Leaf area in cm²", "maxGraphemes": 32 },
+        "specificLeafArea": { "type": "string", "description": "Specific leaf area in mm²/mg", "maxGraphemes": 32 },
+        "seedMass": { "type": "string", "description": "Seed mass in mg", "maxGraphemes": 32 },
+        "growthForm": { "type": "string", "description": "Growth form of the plant", "maxGraphemes": 64, "knownValues": ["tree","shrub","herb","grass","vine","epiphyte","fern","palm","bamboo","succulent","other"] },
+        "leafType": { "type": "string", "description": "Leaf type of the plant", "maxGraphemes": 32, "knownValues": ["broadleaf-deciduous","broadleaf-evergreen","needleleaf-deciduous","needleleaf-evergreen","other"] },
+        "dispersalMode": { "type": "string", "description": "Primary seed dispersal mode", "maxGraphemes": 64, "knownValues": ["wind","water","animal","gravity","ballistic","other"] },
+        "pollinationMode": { "type": "string", "description": "Primary pollination mode", "maxGraphemes": 64, "knownValues": ["insect","wind","bird","bat","water","self","other"] },
+        "traitSource": { "type": "string", "description": "Source database for trait data", "maxGraphemes": 256 }
+      }
+    }
+  }
+}
