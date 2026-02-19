@@ -127,7 +127,7 @@ export const LEXICON_METADATA: LexiconMeta[] = [
     category: "Observations",
     path: "organization/observations/dendogram",
     description: "Phylogenetic tree visualization with analysis metadata and taxonomic context",
-    newFields: ["name", "description", "siteRef", "analysisDate", "analysisMethod", "dataSource", "taxonCount", "taxonGroup", "rootTaxon", "treeType", "thumbnail"],
+    newFields: ["name", "description", "siteRef", "analysisDate", "analysisMethod", "dataSource", "taxonCount", "taxonGroups", "rootTaxon", "treeType", "thumbnail"],
     modifiedFields: [],
     isNew: false,
     hasBeforeAfter: false,
