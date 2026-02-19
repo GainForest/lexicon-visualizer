@@ -11,6 +11,7 @@ import orgMember from "@/data/lexicons/organization/member.json";
 import orgDonation from "@/data/lexicons/organization/donation.json";
 import orgLayer from "@/data/lexicons/organization/layer.json";
 import orgDefaultSite from "@/data/lexicons/organization/defaultSite.json";
+import orgGetIndexedOrganizations from "@/data/lexicons/organization/getIndexedOrganizations.json";
 import orgMeasuredTreesCluster from "@/data/lexicons/organization/observations/measuredTreesCluster.json";
 import orgDendogram from "@/data/lexicons/organization/observations/dendogram.json";
 import orgObservationsFlora from "@/data/lexicons/organization/observations/flora.json";
@@ -37,6 +38,7 @@ const LEXICON_DATA: LexiconDataMap = {
   "organization/donation": orgDonation,
   "organization/layer": orgLayer,
   "organization/defaultSite": orgDefaultSite,
+  "organization/getIndexedOrganizations": orgGetIndexedOrganizations,
   "organization/observations/measuredTreesCluster": orgMeasuredTreesCluster,
   "organization/observations/dendogram": orgDendogram,
   "organization/observations/flora": orgObservationsFlora,
@@ -73,9 +75,33 @@ function countFields(data: unknown): number {
   let count = 0;
   for (const def of Object.values(defs)) {
     const defObj = def as Record<string, unknown>;
-    const record = defObj["record"] as Record<string, unknown> | undefined;
-    const props = (record?.["properties"] ?? defObj["properties"]) as Record<string, unknown> | undefined;
-    if (props) count += Object.keys(props).length;
+    const defType = defObj["type"] as string | undefined;
+
+    if (defType === "query" || defType === "procedure" || defType === "subscription") {
+      // Count parameters
+      const params = defObj["parameters"] as Record<string, unknown> | undefined;
+      const paramProps = params?.["properties"] as Record<string, unknown> | undefined;
+      if (paramProps) count += Object.keys(paramProps).length;
+      // Count output schema
+      const output = defObj["output"] as Record<string, unknown> | undefined;
+      const outputSchema = output?.["schema"] as Record<string, unknown> | undefined;
+      const outputProps = outputSchema?.["properties"] as Record<string, unknown> | undefined;
+      if (outputProps) count += Object.keys(outputProps).length;
+      // Count input schema (procedure)
+      const input = defObj["input"] as Record<string, unknown> | undefined;
+      const inputSchema = input?.["schema"] as Record<string, unknown> | undefined;
+      const inputProps = inputSchema?.["properties"] as Record<string, unknown> | undefined;
+      if (inputProps) count += Object.keys(inputProps).length;
+      // Count message schema (subscription)
+      const message = defObj["message"] as Record<string, unknown> | undefined;
+      const messageSchema = message?.["schema"] as Record<string, unknown> | undefined;
+      const messageProps = messageSchema?.["properties"] as Record<string, unknown> | undefined;
+      if (messageProps) count += Object.keys(messageProps).length;
+    } else {
+      const record = defObj["record"] as Record<string, unknown> | undefined;
+      const props = (record?.["properties"] ?? defObj["properties"]) as Record<string, unknown> | undefined;
+      if (props) count += Object.keys(props).length;
+    }
   }
   return count;
 }

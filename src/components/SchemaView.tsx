@@ -22,6 +22,12 @@ type FieldDef = {
   maxSize?: number;
 };
 
+type SchemaObject = {
+  type?: string;
+  required?: string[];
+  properties?: Record<string, FieldDef>;
+};
+
 type LexiconDef = {
   type?: string;
   description?: string;
@@ -33,6 +39,23 @@ type LexiconDef = {
   };
   required?: string[];
   properties?: Record<string, FieldDef>;
+  // query / procedure / subscription fields
+  parameters?: {
+    type?: string;
+    required?: string[];
+    properties?: Record<string, FieldDef>;
+  };
+  output?: {
+    encoding?: string;
+    schema?: SchemaObject;
+  };
+  input?: {
+    encoding?: string;
+    schema?: SchemaObject;
+  };
+  message?: {
+    schema?: SchemaObject;
+  };
 };
 
 type SchemaViewProps = {
@@ -64,10 +87,59 @@ export default function SchemaView({
         )
       : {};
 
+  const isRpcType = (type?: string) =>
+    type === "query" || type === "procedure" || type === "subscription";
+
+  function renderPropertySection(
+    label: string,
+    rawProps: Record<string, FieldDef> | undefined,
+    required: string[] | undefined
+  ) {
+    const properties: Record<string, FieldDef> | undefined = rawProps
+      ? Object.fromEntries(
+          Object.entries(rawProps).map(([k, v]) => [k, asFieldDef(v)])
+        )
+      : undefined;
+
+    return (
+      <div className="mb-4">
+        <div
+          className="text-xs font-semibold tracking-wide uppercase mb-3 pl-1"
+          style={{ color: "var(--text-muted)" }}
+        >
+          {label}
+        </div>
+        {properties && Object.keys(properties).length > 0 ? (
+          <div className="flex flex-col gap-3">
+            {Object.entries(properties).map(([fieldName, fieldDef]) => (
+              <FieldCard
+                key={fieldName}
+                name={fieldName}
+                def={fieldDef}
+                isNew={newFields.includes(fieldName)}
+                isModified={modifiedFields.includes(fieldName)}
+                isRequired={required?.includes(fieldName)}
+                onRefClick={onRefClick}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm italic pl-1" style={{ color: "var(--text-muted)" }}>
+            No properties defined
+          </p>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-8">
       {Object.entries(defs).map(([defName, def]) => {
-        const isMainRecord = defName === "main" && def.type === "record";
+        const isRecord = def.type === "record";
+        const isRpc = isRpcType(def.type);
+
+        // Determine properties + required for record / plain-object defs
+        const isMainRecord = defName === "main" && isRecord;
         const rawProperties = isMainRecord
           ? def.record?.properties
           : def.properties;
@@ -118,28 +190,70 @@ export default function SchemaView({
               </p>
             )}
 
-            {/* Properties */}
-            {properties && Object.keys(properties).length > 0 ? (
-              <div className="flex flex-col gap-3">
-                {Object.entries(properties).map(([fieldName, fieldDef]) => (
-                  <FieldCard
-                    key={fieldName}
-                    name={fieldName}
-                    def={fieldDef}
-                    isNew={newFields.includes(fieldName)}
-                    isModified={modifiedFields.includes(fieldName)}
-                    isRequired={required?.includes(fieldName)}
-                    onRefClick={onRefClick}
-                  />
-                ))}
+            {/* RPC types: query / procedure / subscription */}
+            {isRpc ? (
+              <div className="flex flex-col gap-2">
+                {/* Parameters (query & procedure) */}
+                {(def.type === "query" || def.type === "procedure") &&
+                  renderPropertySection(
+                    "Parameters",
+                    def.parameters?.properties as Record<string, FieldDef> | undefined,
+                    def.parameters?.required
+                  )}
+
+                {/* Input body (procedure) */}
+                {def.type === "procedure" &&
+                  def.input?.schema?.properties &&
+                  renderPropertySection(
+                    "Input",
+                    def.input.schema.properties as Record<string, FieldDef>,
+                    def.input.schema.required
+                  )}
+
+                {/* Output (query & procedure) */}
+                {(def.type === "query" || def.type === "procedure") &&
+                  def.output?.schema?.properties &&
+                  renderPropertySection(
+                    "Output",
+                    def.output.schema.properties as Record<string, FieldDef>,
+                    def.output.schema.required
+                  )}
+
+                {/* Message (subscription) */}
+                {def.type === "subscription" &&
+                  def.message?.schema?.properties &&
+                  renderPropertySection(
+                    "Message",
+                    def.message.schema.properties as Record<string, FieldDef>,
+                    def.message.schema.required
+                  )}
               </div>
             ) : (
-              <p
-                className="text-sm italic"
-                style={{ color: "var(--text-muted)" }}
-              >
-                No properties defined
-              </p>
+              /* Record / object defs */
+              <>
+                {properties && Object.keys(properties).length > 0 ? (
+                  <div className="flex flex-col gap-3">
+                    {Object.entries(properties).map(([fieldName, fieldDef]) => (
+                      <FieldCard
+                        key={fieldName}
+                        name={fieldName}
+                        def={fieldDef}
+                        isNew={newFields.includes(fieldName)}
+                        isModified={modifiedFields.includes(fieldName)}
+                        isRequired={required?.includes(fieldName)}
+                        onRefClick={onRefClick}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <p
+                    className="text-sm italic"
+                    style={{ color: "var(--text-muted)" }}
+                  >
+                    No properties defined
+                  </p>
+                )}
+              </>
             )}
 
             {/* Separator between defs */}

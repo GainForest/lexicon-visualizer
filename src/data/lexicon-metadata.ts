@@ -96,6 +96,18 @@ export const LEXICON_METADATA: LexiconMeta[] = [
     hasBeforeAfter: false,
     changesSummary: "Minimal record — no changes needed.",
   },
+  {
+    id: "app.gainforest.organization.getIndexedOrganizations",
+    shortName: "getIndexedOrganizations",
+    category: "Organization",
+    path: "organization/getIndexedOrganizations",
+    description: "Query to get all organizations to view initially on map",
+    newFields: [],
+    modifiedFields: [],
+    isNew: true,
+    hasBeforeAfter: false,
+    changesSummary: "New query lexicon — returns a list of indexed organizations for the initial map view.",
+  },
   // Observations
   {
     id: "app.gainforest.organization.observations.measuredTreesCluster",
