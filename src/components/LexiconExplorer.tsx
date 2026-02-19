@@ -13,6 +13,10 @@ import orgLayer from "@/data/lexicons/organization/layer.json";
 import orgDefaultSite from "@/data/lexicons/organization/defaultSite.json";
 import orgMeasuredTreesCluster from "@/data/lexicons/organization/observations/measuredTreesCluster.json";
 import orgDendogram from "@/data/lexicons/organization/observations/dendogram.json";
+import orgObservationsFlora from "@/data/lexicons/organization/observations/flora.json";
+import orgObservationsFauna from "@/data/lexicons/organization/observations/fauna.json";
+import orgPredictionsFlora from "@/data/lexicons/organization/predictions/flora.json";
+import orgPredictionsFauna from "@/data/lexicons/organization/predictions/fauna.json";
 import orgAudio from "@/data/lexicons/organization/recordings/audio.json";
 import dwcOccurrence from "@/data/lexicons/dwc/occurrence.json";
 import dwcEvent from "@/data/lexicons/dwc/event.json";
@@ -35,6 +39,10 @@ const LEXICON_DATA: LexiconDataMap = {
   "organization/defaultSite": orgDefaultSite,
   "organization/observations/measuredTreesCluster": orgMeasuredTreesCluster,
   "organization/observations/dendogram": orgDendogram,
+  "organization/observations/flora": orgObservationsFlora,
+  "organization/observations/fauna": orgObservationsFauna,
+  "organization/predictions/flora": orgPredictionsFlora,
+  "organization/predictions/fauna": orgPredictionsFauna,
   "organization/recordings/audio": orgAudio,
   "dwc/occurrence": dwcOccurrence,
   "dwc/event": dwcEvent,
@@ -54,6 +62,7 @@ const CATEGORY_ICONS: Record<LexiconCategory, string> = {
   "Darwin Core": "🧬",
   Evaluator: "🤖",
   Common: "📦",
+  Predictions: "🔮",
 };
 
 function countFields(data: unknown): number {
@@ -212,6 +221,20 @@ export default function LexiconExplorer() {
                         >
                           <span className="font-mono text-xs flex-1 truncate">{item.shortName}</span>
                           <div className="flex items-center gap-1 flex-shrink-0">
+                            {item.deprecated && (
+                              <span
+                                className="text-xs px-1 rounded font-semibold"
+                                style={{
+                                  background: "rgba(239,68,68,0.15)",
+                                  color: "#ef4444",
+                                  fontSize: "9px",
+                                  border: "1px solid rgba(239,68,68,0.3)",
+                                }}
+                                title={`Deprecated — use ${item.deprecatedReplacement} instead`}
+                              >
+                                DEP
+                              </span>
+                            )}
                             {item.isNew && (
                               <span
                                 className="w-1.5 h-1.5 rounded-full"
@@ -269,6 +292,19 @@ export default function LexiconExplorer() {
                     >
                       {CATEGORY_ICONS[selectedMeta.category]} {selectedMeta.category}
                     </span>
+                    {selectedMeta.deprecated && (
+                      <span
+                        className="text-xs px-2 py-1 rounded font-semibold"
+                        style={{
+                          background: "rgba(239,68,68,0.15)",
+                          color: "#ef4444",
+                          border: "1px solid rgba(239,68,68,0.4)",
+                        }}
+                        title={`Use ${selectedMeta.deprecatedReplacement} instead`}
+                      >
+                        ⚠️ DEPRECATED
+                      </span>
+                    )}
                     {selectedMeta.isNew && (
                       <span
                         className="text-xs px-2 py-1 rounded font-semibold"
@@ -328,6 +364,32 @@ export default function LexiconExplorer() {
                 <span className="font-semibold" style={{ color: "var(--gold)" }}>Changes: </span>
                 {selectedMeta.changesSummary}
               </div>
+
+              {/* Deprecation notice */}
+              {selectedMeta.deprecated && selectedMeta.deprecatedReplacement && (
+                <div
+                  className="mt-3 px-4 py-3 rounded-lg text-sm flex items-start gap-2"
+                  style={{
+                    background: "rgba(239,68,68,0.08)",
+                    border: "1px solid rgba(239,68,68,0.3)",
+                    color: "#fca5a5",
+                  }}
+                >
+                  <span className="flex-shrink-0">⚠️</span>
+                  <span>
+                    <span className="font-semibold" style={{ color: "#ef4444" }}>Deprecated. </span>
+                    Use{" "}
+                    <button
+                      className="font-mono underline underline-offset-2 hover:opacity-80 transition-opacity"
+                      style={{ color: "#f87171" }}
+                      onClick={() => handleRefClick(selectedMeta.deprecatedReplacement!)}
+                    >
+                      {selectedMeta.deprecatedReplacement}
+                    </button>{" "}
+                    instead.
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Legend */}

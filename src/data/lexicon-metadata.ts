@@ -4,7 +4,8 @@ export type LexiconCategory =
   | "Recordings"
   | "Darwin Core"
   | "Evaluator"
-  | "Common";
+  | "Common"
+  | "Predictions";
 
 export type LexiconMeta = {
   id: string;
@@ -17,6 +18,8 @@ export type LexiconMeta = {
   isNew: boolean; // entire lexicon is new
   hasBeforeAfter: boolean;
   changesSummary: string;
+  deprecated?: boolean; // lexicon is deprecated
+  deprecatedReplacement?: string; // NSID of the replacement lexicon
 };
 
 export const LEXICON_METADATA: LexiconMeta[] = [
@@ -117,6 +120,34 @@ export const LEXICON_METADATA: LexiconMeta[] = [
     isNew: false,
     hasBeforeAfter: false,
     changesSummary: "Added 11 fields for phylogenetic analysis provenance, taxonomic context, and visual preview.",
+  },
+  {
+    id: "app.gainforest.organization.observations.flora",
+    shortName: "flora",
+    category: "Observations",
+    path: "organization/observations/flora",
+    description: "DEPRECATED: Use app.gainforest.dwc.occurrence instead. A declaration of a flora observation for an organization.",
+    newFields: [],
+    modifiedFields: [],
+    isNew: false,
+    hasBeforeAfter: false,
+    changesSummary: "No new fields — this lexicon is deprecated. Migrate to app.gainforest.dwc.occurrence.",
+    deprecated: true,
+    deprecatedReplacement: "app.gainforest.dwc.occurrence",
+  },
+  {
+    id: "app.gainforest.organization.observations.fauna",
+    shortName: "fauna",
+    category: "Observations",
+    path: "organization/observations/fauna",
+    description: "DEPRECATED: Use app.gainforest.dwc.occurrence instead. A declaration of a fauna observation for an organization.",
+    newFields: [],
+    modifiedFields: [],
+    isNew: false,
+    hasBeforeAfter: false,
+    changesSummary: "No new fields — this lexicon is deprecated. Migrate to app.gainforest.dwc.occurrence.",
+    deprecated: true,
+    deprecatedReplacement: "app.gainforest.dwc.occurrence",
   },
   // Recordings
   {
@@ -229,6 +260,35 @@ export const LEXICON_METADATA: LexiconMeta[] = [
     hasBeforeAfter: false,
     changesSummary: "Brand new lexicon. Users opt-in to evaluator services by publishing this record — deleting it unsubscribes.",
   },
+  // Predictions
+  {
+    id: "app.gainforest.organization.predictions.flora",
+    shortName: "flora",
+    category: "Predictions",
+    path: "organization/predictions/flora",
+    description: "DEPRECATED: Use app.gainforest.dwc.occurrence with basisOfRecord='MachineObservation' instead. A declaration of a flora prediction for an organization.",
+    newFields: [],
+    modifiedFields: [],
+    isNew: false,
+    hasBeforeAfter: false,
+    changesSummary: "No new fields — this lexicon is deprecated. Migrate to app.gainforest.dwc.occurrence with basisOfRecord='MachineObservation'.",
+    deprecated: true,
+    deprecatedReplacement: "app.gainforest.dwc.occurrence",
+  },
+  {
+    id: "app.gainforest.organization.predictions.fauna",
+    shortName: "fauna",
+    category: "Predictions",
+    path: "organization/predictions/fauna",
+    description: "DEPRECATED: Use app.gainforest.dwc.occurrence with basisOfRecord='MachineObservation' instead. A declaration of a fauna prediction for an organization.",
+    newFields: [],
+    modifiedFields: [],
+    isNew: false,
+    hasBeforeAfter: false,
+    changesSummary: "No new fields — this lexicon is deprecated. Migrate to app.gainforest.dwc.occurrence with basisOfRecord='MachineObservation'.",
+    deprecated: true,
+    deprecatedReplacement: "app.gainforest.dwc.occurrence",
+  },
   // Common
   {
     id: "app.gainforest.common.defs",
@@ -251,6 +311,7 @@ export const CATEGORIES: LexiconCategory[] = [
   "Darwin Core",
   "Evaluator",
   "Common",
+  "Predictions",
 ];
 
 export function getLexiconsByCategory(category: LexiconCategory): LexiconMeta[] {
